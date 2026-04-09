@@ -4,6 +4,7 @@ class OrderSummary {
   const OrderSummary({
     required this.item,
     required this.quantity,
+    required this.patties,
     required this.spicyLevel,
     required this.subtotal,
     required this.toppings,
@@ -14,6 +15,7 @@ class OrderSummary {
 
   final FoodItem item;
   final int quantity;
+  final int patties;
   final double spicyLevel;
   final double subtotal;
   final List<String> toppings;

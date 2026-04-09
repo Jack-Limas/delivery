@@ -3,8 +3,50 @@ import 'package:flutter/material.dart';
 import '../../../../app/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final TextEditingController _nameController =
+      TextEditingController(text: 'Sophia Patel');
+  final TextEditingController _emailController =
+      TextEditingController(text: 'sophiapatel@gmail.com');
+  final TextEditingController _addressController =
+      TextEditingController(text: '123 Main St Apartment 4A,New York, NY');
+  final TextEditingController _passwordController =
+      TextEditingController(text: '1234567890');
+
+  bool _isEditing = false;
+  bool _obscurePassword = true;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _addressController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _toggleEdit() {
+    setState(() {
+      _isEditing = !_isEditing;
+    });
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            _isEditing ? 'Modo edicion activado' : 'Cambios listos',
+          ),
+        ),
+      );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,25 +126,44 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    const _InfoField(
+                    _EditableField(
                       label: 'Name',
-                      value: 'Sophia Patel',
+                      controller: _nameController,
+                      enabled: _isEditing,
                     ),
                     const SizedBox(height: 14),
-                    const _InfoField(
+                    _EditableField(
                       label: 'Email',
-                      value: 'sophiapatel@gmail.com',
+                      controller: _emailController,
+                      enabled: _isEditing,
                     ),
                     const SizedBox(height: 14),
-                    const _InfoField(
+                    _EditableField(
                       label: 'Delivery address',
-                      value: '123 Main St Apartment 4A,New York, NY',
+                      controller: _addressController,
+                      enabled: _isEditing,
                     ),
                     const SizedBox(height: 14),
-                    const _InfoField(
+                    _EditableField(
                       label: 'Password',
-                      value: '● ● ● ● ● ● ● ● ● ●',
+                      controller: _passwordController,
+                      enabled: _isEditing,
                       showLock: true,
+                      obscureText: _obscurePassword,
+                      trailing: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                        child: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          size: 18,
+                          color: const Color(0xFF9A8F8B),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 28),
                     const Divider(color: Color(0xFFF0E8E6)),
@@ -125,25 +186,24 @@ class ProfileScreen extends StatelessWidget {
                           child: SizedBox(
                             height: 50,
                             child: FilledButton(
-                              onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Perfil editable pronto'),
-                                  ),
-                                );
-                              },
+                              onPressed: _toggleEdit,
                               style: FilledButton.styleFrom(
                                 backgroundColor: const Color(0xFF453533),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(18),
                                 ),
                               ),
-                              child: const Row(
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text('Edit Profile'),
-                                  SizedBox(width: 8),
-                                  Icon(Icons.edit_outlined, size: 18),
+                                  Text(_isEditing ? 'Save Profile' : 'Edit Profile'),
+                                  const SizedBox(width: 8),
+                                  Icon(
+                                    _isEditing
+                                        ? Icons.check_circle_outline
+                                        : Icons.edit_outlined,
+                                    size: 18,
+                                  ),
                                 ],
                               ),
                             ),
@@ -252,16 +312,22 @@ class _AvatarFrame extends StatelessWidget {
   }
 }
 
-class _InfoField extends StatelessWidget {
-  const _InfoField({
+class _EditableField extends StatelessWidget {
+  const _EditableField({
     required this.label,
-    required this.value,
+    required this.controller,
+    required this.enabled,
     this.showLock = false,
+    this.obscureText = false,
+    this.trailing,
   });
 
   final String label;
-  final String value;
+  final TextEditingController controller;
+  final bool enabled;
   final bool showLock;
+  final bool obscureText;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -297,17 +363,28 @@ class _InfoField extends StatelessWidget {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF3F302D),
-                ),
+          TextField(
+            controller: controller,
+            enabled: enabled,
+            obscureText: obscureText,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF3F302D),
+            ),
+            decoration: InputDecoration(
+              isDense: true,
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.fromLTRB(16, 18, 16, 10),
+              suffixIcon: trailing == null
+                  ? null
+                  : Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: trailing,
+                    ),
+              suffixIconConstraints: const BoxConstraints(
+                minWidth: 24,
+                minHeight: 24,
               ),
             ),
           ),

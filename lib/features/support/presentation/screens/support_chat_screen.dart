@@ -21,7 +21,7 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
     const _ChatMessage(text: 'Ok, please let me check!', isUser: false),
     const _ChatMessage(text: 'Sure...', isUser: true),
     const _ChatMessage(
-      text: "It’ll get 25 minutes to arrive to your address",
+      text: "It'll get 25 minutes to arrive to your address",
       isUser: false,
       showTimestamp: true,
     ),

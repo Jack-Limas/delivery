@@ -29,6 +29,7 @@ class AppRouter {
   static final sampleOrderSummary = OrderSummary(
     item: foodItems.first,
     quantity: 2,
+    patties: 2,
     spicyLevel: 0.6,
     subtotal: 16.48,
     toppings: const ['Tomato', 'Onions'],

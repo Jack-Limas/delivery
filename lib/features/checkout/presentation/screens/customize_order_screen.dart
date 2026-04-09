@@ -19,6 +19,7 @@ class CustomizeOrderScreen extends StatefulWidget {
 
 class _CustomizeOrderScreenState extends State<CustomizeOrderScreen> {
   late int _quantity = widget.item.initialQuantity;
+  int _patties = 2;
   double _spicyLevel = 0.90;
 
   final Map<String, bool> _toppings = <String, bool>{
@@ -61,13 +62,18 @@ class _CustomizeOrderScreenState extends State<CustomizeOrderScreen> {
           (sum, entry) => sum + (_extraPrices[entry.key] ?? 0),
         );
 
-    return widget.item.price + extrasTotal + ((_quantity - 1) * 1.25);
+    final pattiesTotal = (_patties - 1) * 2.40;
+    return widget.item.price +
+        extrasTotal +
+        ((_quantity - 1) * 1.25) +
+        pattiesTotal;
   }
 
   void _goToPayment() {
     final summary = OrderSummary(
       item: widget.item,
       quantity: _quantity,
+      patties: _patties,
       spicyLevel: _spicyLevel,
       subtotal: double.parse(_total.toStringAsFixed(2)),
       toppings: _toppings.entries
@@ -205,6 +211,53 @@ class _CustomizeOrderScreenState extends State<CustomizeOrderScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: 36),
+                                const Text(
+                                  'Meat',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF3F302D),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: [
+                                    _MiniActionButton(
+                                      icon: Icons.remove,
+                                      onTap: () {
+                                        setState(() {
+                                          if (_patties > 1) {
+                                            _patties--;
+                                          }
+                                        });
+                                      },
+                                    ),
+                                    SizedBox(
+                                      width: 44,
+                                      child: Center(
+                                        child: Text(
+                                          '$_patties',
+                                          style: const TextStyle(
+                                            fontSize: 28,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xFF3F302D),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    _MiniActionButton(
+                                      icon: Icons.add,
+                                      onTap: () {
+                                        setState(() {
+                                          if (_patties < 4) {
+                                            _patties++;
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 28),
                                 const Text(
                                   'Portion',
                                   style: TextStyle(
